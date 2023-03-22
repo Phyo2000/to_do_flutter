@@ -23,6 +23,8 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
 
   final descController = TextEditingController();
 
+  // DateTime dateTime = DateTime.now();
+
   void addNewTodo({required BuildContext context}) {
     final provider = Provider.of<ListTodoItem>(context, listen: false);
 
@@ -36,6 +38,19 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
     );
     Navigator.of(context).pop();
   }
+
+  // void _showDatePicker() {
+  //   showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2025),
+  //   ).then((value) {
+  //     setState(() {
+  //       dateTime = value!;
+  //     });
+  //   });
+  // }
 
   @override
   void initState() {
@@ -53,7 +68,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
         title: const Text("Add your ToDo Activity"),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           children: [
             TextFormField(
@@ -63,9 +78,10 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
               controller: descController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(
-                  Icons.key,
-                  color: Colors.red,
+                  Icons.abc,
+                  color: Colors.deepPurple,
                 ),
+
                 // prefix: Icon(
                 //   Icons.key,
                 //   color: Colors.red,
@@ -76,9 +92,35 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     "----------------------$value----------------------");
               },
             ),
-            ElevatedButton(
-                onPressed: () => addNewTodo(context: context),
-                child: const Text("button")),
+            Padding(
+              padding: const EdgeInsets.only(top: 15, bottom: 10),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  child: const Text(
+                    "Select Date",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    DateTime? newDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime(1980),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2025),
+                    );
+                    if (newDate == null) return;
+                  },
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () => addNewTodo(context: context),
+                  child: const Text("Add")),
+            ),
           ],
         ),
       ),
