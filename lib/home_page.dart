@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/components/todo_item_card.dart';
 import 'package:todo_app/screens/todo_add_screen.dart';
 import 'package:todo_app/models/todo_model.dart';
+import 'package:intl/intl.dart';
 //import 'package:http/http.dart' as https;
 
 class MyHomePage extends StatefulWidget {
@@ -34,6 +35,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEEEFF5),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const TextField(
+              //onChanged: (value),
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10),
+                prefixIcon: Icon(
+                  Icons.menu,
+                  color: Colors.deepPurple,
+                  size: 25,
+                ),
+                prefixIconConstraints: BoxConstraints(
+                  maxHeight: 24,
+                  minWidth: 25,
+                ),
+                border: InputBorder.none,
+                hintText: 'Search Activity',
+                hintStyle: TextStyle(color: Colors.deepPurple),
+              ),
+            ),
+          ),
           Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
@@ -61,8 +87,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
-                        const Text(
-                          "28 Feb, 2023",
+                        Text(
+                          DateFormat("MMM dd, yyyy")
+                              .format(DateTime.now())
+                              .toString(),
                           style: TextStyle(fontSize: 15),
                         ),
                       ],
@@ -76,7 +104,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         "Completed",
                         style: TextStyle(color: Colors.green, fontSize: 16),
                       ),
-                      Text("1/4"),
+                      Row(
+                        children: [
+                          Text(
+                            list.todoItemList
+                                .where((element) => element.isDone)
+                                .length
+                                .toString(),
+                            style: TextStyle(color: Colors.green),
+                          ),
+                          Text("/"),
+                          Text(
+                            list.todoItemList.length.toString(),
+                            style: TextStyle(color: Colors.deepPurple),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -84,9 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Consumer<ListTodoItem>(builder: (context, list, _) {
-            return SingleChildScrollView(
-              controller: controller,
-              child: Padding(
+            if (list.todoItemList.length != 0) {
+              return Padding(
                 padding: const EdgeInsets.only(
                   top: 20,
                   left: 15,
@@ -95,32 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEEEFF5),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const TextField(
-                        //onChanged: (value),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          prefixIcon: Icon(
-                            Icons.menu,
-                            color: Colors.deepPurple,
-                            size: 25,
-                          ),
-                          prefixIconConstraints: BoxConstraints(
-                            maxHeight: 24,
-                            minWidth: 25,
-                          ),
-                          border: InputBorder.none,
-                          hintText: 'Search Activity',
-                          hintStyle: TextStyle(color: Colors.deepPurple),
-                        ),
-                      ),
-                    ),
-
                     const Text(
                       "Choose Activity",
                       style: TextStyle(
@@ -144,8 +160,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     //         description: item.description))
                   ],
                 ),
-              ),
-            );
+              );
+              //here is single Child
+            } else {
+              return Column(
+                children: [
+                  Opacity(
+                    opacity: 0.3,
+                    child: Image(
+                      image: AssetImage('assets/images/toDo.png'),
+                    ),
+                  ),
+                  Text(
+                    "All Done For Now",
+                    style: TextStyle(color: Colors.deepPurple, fontSize: 20),
+                  ),
+                ],
+              );
+            }
           }),
         ],
       ),

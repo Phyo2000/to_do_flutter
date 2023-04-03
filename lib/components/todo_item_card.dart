@@ -1,16 +1,23 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/todo_add_screen.dart';
+import 'package:provider/provider.dart';
 
-class TodoItemCard extends StatelessWidget {
+class TodoItemCard extends StatefulWidget {
   final TodoItem item;
 
-  const TodoItemCard({
+  TodoItemCard({
     Key? key,
     required this.item,
   }) : super(key: key);
 
+  @override
+  State<TodoItemCard> createState() => _TodoItemCardState();
+}
+
+class _TodoItemCardState extends State<TodoItemCard> {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -26,7 +33,15 @@ class TodoItemCard extends StatelessWidget {
       confirmDismiss: (direction) async {
         print(direction);
         if (direction == DismissDirection.startToEnd) {
-          // removeItem(id: item.id);
+          //widget.item.isDone = true;
+          Provider.of<ListTodoItem>(context, listen: false)
+              .setDone(widget.item);
+          //Provider.of<ListTodoItem>(context, listen: false)
+          // .removeTodoItem(widget.item);
+          return true;
+        } else if (direction == DismissDirection.endToStart) {
+          Provider.of<ListTodoItem>(context, listen: false)
+              .removeTodoItem(widget.item);
         }
         return true;
       },
@@ -41,11 +56,29 @@ class TodoItemCard extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(
-                width: 60,
-                child: Icon(
-                  item.icon,
-                  size: 20,
-                  color: Colors.deepPurple,
+                width: 80,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.item.date,
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      // Text(
+                      //   widget.item.time,
+                      //   style: TextStyle(
+                      //     color: Colors.deepPurple,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      //   // size: 20,
+                      //   // color: Colors.deepPurple,
+                      // ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(
@@ -53,21 +86,29 @@ class TodoItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.title,
+                      widget.item.title,
                       style: const TextStyle(
                         fontSize: 17.5,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Text(item.description),
+                    Text(widget.item.description),
                   ],
                 ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: widget.item.userColor,
+                ),
+                width: 25,
+                height: 25,
               ),
               GestureDetector(
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => TodoAddScreen(
-                      item: item,
+                      item: widget.item,
                     ),
                   ),
                 ),
